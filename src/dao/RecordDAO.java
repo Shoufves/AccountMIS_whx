@@ -260,6 +260,95 @@ public class RecordDAO {
             e.printStackTrace();
         }
         return records;
-    }        
-  
+    }
+
+    /**
+     * 获取筛选条件下的记录总数
+     * @param cid      分类ID(null=不筛选)
+     * @param startDate 起始日期(null=不筛选)
+     * @param endDate   截止日期(null=不筛选)
+     */
+    public int getTotal(Integer cid, Date startDate, Date endDate) {
+        int total = 0;
+        StringBuilder sql = new StringBuilder("select count(*) from record where 1=1");
+        java.util.List<Object> params = new java.util.ArrayList<Object>();
+
+        if (cid != null) {
+            sql.append(" and cid = ?");
+            params.add(cid);
+        }
+        if (startDate != null) {
+            sql.append(" and date >= ?");
+            params.add(DateUtil.util2sql(startDate));
+        }
+        if (endDate != null) {
+            sql.append(" and date <= ?");
+            params.add(DateUtil.util2sql(endDate));
+        }
+
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++)
+                ps.setObject(i + 1, params.get(i));
+            ResultSet rs = ps.executeQuery();
+            if (rs.next())
+                total = rs.getInt(1);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return total;
+    }
+
+    /**
+     * 多条件筛选 + 分页查询
+     * @param cid      分类ID(null=不筛选)
+     * @param startDate 起始日期(null=不筛选)
+     * @param endDate   截止日期(null=不筛选)
+     * @param start    分页起始
+     * @param count    每页条数
+     */
+    public List<Record> list(Integer cid, Date startDate, Date endDate, int start, int count) {
+        List<Record> records = new ArrayList<Record>();
+        StringBuilder sql = new StringBuilder("select * from record where 1=1");
+        java.util.List<Object> params = new java.util.ArrayList<Object>();
+
+        if (cid != null) {
+            sql.append(" and cid = ?");
+            params.add(cid);
+        }
+        if (startDate != null) {
+            sql.append(" and date >= ?");
+            params.add(DateUtil.util2sql(startDate));
+        }
+        if (endDate != null) {
+            sql.append(" and date <= ?");
+            params.add(DateUtil.util2sql(endDate));
+        }
+
+        sql.append(" order by id desc limit ?,?");
+
+        try (Connection c = DBUtil.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql.toString())) {
+            int idx = 1;
+            for (Object p : params)
+                ps.setObject(idx++, p);
+            ps.setInt(idx++, start);
+            ps.setInt(idx, count);
+
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                Record r = new Record();
+                r.id = rs.getInt("id");
+                r.spend = rs.getInt("spend");
+                r.cid = rs.getInt("cid");
+                r.comment = rs.getString("comment");
+                r.date = rs.getDate("date");
+                records.add(r);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return records;
+    }
+
 }
