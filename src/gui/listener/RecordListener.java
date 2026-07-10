@@ -6,11 +6,14 @@ import java.util.Date;
  
 import javax.swing.JOptionPane;
  
+import dao.RecordDAO;
 import entity.Category;
+import entity.Record;
 import gui.panel.CategoryPanel;
 import gui.panel.MainPanel;
 import gui.panel.RecordPanel;
 import gui.panel.SpendPanel;
+import service.ConfigService;
 import service.IncomeService;
 import service.RecordService;
 import util.GUIUtil;
@@ -49,6 +52,20 @@ public class RecordListener implements ActionListener {
         String comment = p.tfComment.getText();
         Date d = p.datepick.getDate();
         new RecordService().add(spend, c, comment, d);
+
+        // 检查是否超预算
+        int budget = new ConfigService().getIntBudget();
+        if (budget > 0) {
+            int monthSpend = 0;
+            for (Record r : new RecordDAO().listThisMonth())
+                monthSpend += r.getSpend();
+            if (monthSpend > budget) {
+                int exceeded = monthSpend - budget;
+                JOptionPane.showMessageDialog(p, "警告：本月消费已超出预算 " + exceeded + " 元！",
+                        "\u9884\u7b97\u8d85\u652f\u63d0\u9192", JOptionPane.WARNING_MESSAGE);
+            }
+        }
+
         JOptionPane.showMessageDialog(p, "\u6dfb\u52a0\u6210\u529f");
         MainPanel.instance.workingPanel.show(SpendPanel.instance);
     }
