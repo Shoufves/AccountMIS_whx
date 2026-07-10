@@ -45,8 +45,8 @@ public class HistoryPanel extends WorkingPanel {
     public JLabel lPage = new JLabel("\u7b2c1\u9875/\u51711\u9875");
 
     // 操作
-    public JButton bEdit = new JButton("\u7f16\u8f91");
-    public JButton bDelete = new JButton("\u5220\u9664");
+    public JButton bEdit = new JButton("编辑");
+    public JButton bDelete = new JButton("删除");
 
     // 分页状态
     public int page = 1;

@@ -1,5 +1,6 @@
 package gui.panel;
  
+import java.awt.FlowLayout;
 import javax.swing.JButton;
  
 import gui.listener.BackupListener;
@@ -13,10 +14,13 @@ public class BackupPanel extends WorkingPanel {
  
     public static BackupPanel instance = new BackupPanel();
     JButton bBackup = new JButton("备份");
+    public JButton bExportCSV = new JButton("导出CSV");
  
     public BackupPanel() {
-        GUIUtil.setColor(ColorUtil.blueColor, bBackup);
+        GUIUtil.setColor(ColorUtil.blueColor, bBackup, bExportCSV);
+        this.setLayout(new FlowLayout());
         this.add(bBackup);
+        this.add(bExportCSV);
         addListener();
     }
  
@@ -33,6 +37,7 @@ public class BackupPanel extends WorkingPanel {
     public void addListener() {
         BackupListener listener = new BackupListener();
         bBackup.addActionListener(listener);
+        bExportCSV.addActionListener(listener);
     }
  
 }
