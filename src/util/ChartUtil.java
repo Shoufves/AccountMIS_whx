@@ -1,19 +1,22 @@
 package util;
  
+import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 import java.awt.Image;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
 import java.util.List;
  
-import javax.swing.Icon;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
+import javax.swing.*;
  
 import com.objectplanet.chart.BarChart;
 import com.objectplanet.chart.Chart;
  
 import entity.Record;
+import entity.CategorySpend;
  
 public class ChartUtil {
     private static String[] sampleLabels(List<Record> rs) {
@@ -178,6 +181,68 @@ public class ChartUtil {
         l.setIcon(icon);
         p.add(l);
         GUIUtil.showPanel(p);
+    }
+
+    /**
+     * 生成分类消费占比饼图
+     * @param data  分类消费数据列表
+     * @param width 图片宽度
+     * @param height 图片高度
+     * @return 饼图Image
+     */
+    public static Image getPieImage(List<CategorySpend> data, int width, int height) {
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(ColorUtil.backgroundColor);
+        g.fillRect(0, 0, width, height);
+
+        if (data == null || data.isEmpty()) {
+            g.setColor(ColorUtil.grayColor);
+            g.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.PLAIN, 16));
+            String msg = "\u6682\u65e0\u6570\u636e";
+            FontMetrics fm = g.getFontMetrics();
+            g.drawString(msg, (width - fm.stringWidth(msg)) / 2, height / 2);
+            g.dispose();
+            return img;
+        }
+
+        int pieX = 20, pieY = 20;
+        int pieD = Math.min(height - 40, 180);
+        int legendX = pieX + pieD + 30;
+
+        // draw pie
+        int startAngle = 90;
+        for (CategorySpend cs : data) {
+            int arcAngle = (int) Math.round(cs.percent / 100.0 * 360);
+            if (arcAngle <= 0) continue;
+            g.setColor(cs.color);
+            g.fillArc(pieX, pieY, pieD, pieD, startAngle, -arcAngle);
+            startAngle -= arcAngle;
+        }
+        // white center circle
+        g.setColor(Color.WHITE);
+        int innerD = pieD * 2 / 5;
+        g.fillOval(pieX + (pieD - innerD) / 2, pieY + (pieD - innerD) / 2, innerD, innerD);
+
+        // legend
+        g.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.PLAIN, 11));
+        FontMetrics fm = g.getFontMetrics();
+        int legendStart = Math.max(10, (pieY + pieD - data.size() * 16) / 2);
+        for (int i = 0; i < data.size(); i++) {
+            CategorySpend cs = data.get(i);
+            int y = legendStart + i * 16;
+            g.setColor(cs.color);
+            g.fillRect(legendX, y, 12, 12);
+            g.setColor(Color.DARK_GRAY);
+            g.drawRect(legendX, y, 12, 12);
+            String label = cs.name + " " + String.format("%.1f%%", cs.percent);
+            g.setColor(Color.BLACK);
+            g.drawString(label, legendX + 16, y + 10);
+        }
+
+        g.dispose();
+        return img;
     }
  
 }
