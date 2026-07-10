@@ -17,6 +17,10 @@ public class SpendPage {
     public int usagePercentage;
     //是否超支
     public boolean isOverSpend = false;
+    //本月收入
+    public String monthIncome = "\uffe50";
+    //本月结余
+    public String monthBalance = "\uffe50";
  
     public SpendPage(int monthSpend, int todaySpend, int avgSpendPerDay, int monthAvailable, int dayAvgAvailable,
             int monthLeftDay, int usagePercentage) {

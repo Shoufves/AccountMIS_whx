@@ -72,3 +72,16 @@ CREATE TABLE `record` (
 INSERT INTO `record` VALUES ('1', '100', '2', '麦当劳', '2022-03-17');
 INSERT INTO `record` VALUES ('2', '300', '5', '乐园', '2022-03-19');
 INSERT INTO `record` VALUES ('3', '222', '5', '', '2022-03-19');
+
+-- ----------------------------
+-- Table structure for income
+-- ----------------------------
+DROP TABLE IF EXISTS `income`;
+CREATE TABLE `income` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `amount` int(11) DEFAULT NULL,
+  `source` varchar(255) DEFAULT NULL,
+  `comment` varchar(255) DEFAULT NULL,
+  `date` date DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

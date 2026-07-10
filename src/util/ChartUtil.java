@@ -184,6 +184,101 @@ public class ChartUtil {
     }
 
     /**
+     * 生成月度收支双柱图（蓝色=支出，绿色=收入）
+     * @param spendRecords 每日支出数据
+     * @param incomeRecords 每日收入数据
+     * @param width 图片宽度
+     * @param height 图片高度
+     * @return 收支双柱图Image
+     */
+    public static Image getIncomeExpenseImage(List<Record> spendRecords, List<Record> incomeRecords, int width, int height) {
+        BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = img.createGraphics();
+        g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g.setColor(ColorUtil.backgroundColor);
+        g.fillRect(0, 0, width, height);
+
+        double[] spendVals = sampleValues(spendRecords);
+        double[] incomeVals = sampleValues(incomeRecords);
+        int n = spendVals.length;
+        int maxVal = Math.max(max(spendVals), max(incomeVals));
+        if (maxVal == 0) maxVal = 1;
+
+        int left = 40, right = 15, top = 8, bottom = 22;
+        int chartW = width - left - right;
+        int chartH = height - top - bottom;
+
+        // 水平网格线
+        g.setStroke(new BasicStroke(1));
+        g.setColor(new Color(210, 210, 210));
+        for (int i = 0; i <= 4; i++) {
+            int y = top + chartH - chartH * i / 4;
+            g.drawLine(left, y, left + chartW, y);
+        }
+
+        // Y轴刻度标签
+        g.setFont(new Font("Arial", Font.PLAIN, 9));
+        g.setColor(Color.GRAY);
+        for (int i = 0; i <= 4; i++) {
+            int val = maxVal * i / 4;
+            g.drawString(String.valueOf(val), 2, top + chartH - chartH * i / 4 + 4);
+        }
+
+        // 双柱
+        double groupW = (double) chartW / n;
+        double barW = groupW * 0.38;
+        Color spendColor = ColorUtil.blueColor;
+        Color incomeColor = new Color(0, 170, 50);
+
+        for (int i = 0; i < n; i++) {
+            double x0 = left + i * groupW;
+            double xSpend = x0 + groupW * 0.05;
+            double xIncome = x0 + groupW * 0.47;
+
+            int sh = (int) ((double) spendVals[i] / maxVal * chartH);
+            if (sh > 0) {
+                g.setColor(spendColor);
+                g.fillRect((int) xSpend, top + chartH - sh, (int) barW, sh);
+            }
+            int ih = (int) ((double) incomeVals[i] / maxVal * chartH);
+            if (ih > 0) {
+                g.setColor(incomeColor);
+                g.fillRect((int) xIncome, top + chartH - ih, (int) barW, ih);
+            }
+        }
+
+        // X轴
+        g.setColor(Color.GRAY);
+        g.drawLine(left, top + chartH, left + chartW, top + chartH);
+
+        // X轴标签（每5天）
+        g.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.PLAIN, 10));
+        FontMetrics fm = g.getFontMetrics();
+        for (int i = 0; i < n; i += 5) {
+            String label = (i + 1) + "\u65e5";
+            g.setColor(Color.GRAY);
+            g.drawString(label, (int)(left + i * groupW + groupW / 2 - fm.stringWidth(label) / 2), top + chartH + 14);
+        }
+
+        // 图例
+        g.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.PLAIN, 11));
+        fm = g.getFontMetrics();
+        int ly = height - 4;
+        g.setColor(spendColor);
+        g.fillRect(left, ly - 10, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawString("\u652f\u51fa", left + 14, ly);
+        int lx2 = left + 18 + fm.stringWidth("\u652f\u51fa");
+        g.setColor(incomeColor);
+        g.fillRect(lx2, ly - 10, 10, 10);
+        g.setColor(Color.BLACK);
+        g.drawString("\u6536\u5165", lx2 + 14, ly);
+
+        g.dispose();
+        return img;
+    }
+
+    /**
      * 生成分类消费占比饼图
      * @param data  分类消费数据列表
      * @param width 图片宽度

@@ -52,9 +52,15 @@ public class SpendService {
         // 计算使用比例
         usagePercentage = monthSpend * 100 / monthBudget;
  
-        // 根据这些信息，生成SpendPage对象
- 
-        return new SpendPage(monthSpend, todaySpend, avgSpendPerDay, monthAvailable, dayAvgAvailable, monthLeftDay,
+        SpendPage page = new SpendPage(monthSpend, todaySpend, avgSpendPerDay,
+                monthAvailable, dayAvgAvailable, monthLeftDay,
                 usagePercentage);
+
+        int monthIncome = new IncomeService().getMonthIncome();
+        int monthBalance = monthIncome - monthSpend;
+        page.monthIncome = "\uffe5" + monthIncome;
+        page.monthBalance = monthBalance >= 0 ? "\uffe5" + monthBalance : "-\uffe5" + (-monthBalance);
+
+        return page;
     }
 }

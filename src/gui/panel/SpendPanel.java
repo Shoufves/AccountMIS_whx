@@ -20,19 +20,21 @@ import util.ColorUtil;
 public class SpendPanel extends WorkingPanel {
     public static SpendPanel instance = new SpendPanel();
  
-    JLabel lMonthSpend = new JLabel("本月消费");
-    JLabel lTodaySpend = new JLabel("今日消费");
-    JLabel lAvgSpendPerDay = new JLabel("日均消费");
-    JLabel lMonthLeft = new JLabel("本月剩余");
-    JLabel lDayAvgAvailable = new JLabel("日均可用");
-    JLabel lMonthLeftDay = new JLabel("距离月末");
+    JLabel lMonthSpend = new JLabel("\u672c\u6708\u6d88\u8d39");
+    JLabel lTodaySpend = new JLabel("\u4eca\u65e5\u6d88\u8d39");
+    JLabel lAvgSpendPerDay = new JLabel("\u65e5\u5747\u6d88\u8d39");
+    JLabel lMonthLeft = new JLabel("\u672c\u6708\u5269\u4f59");
+    JLabel lDayAvgAvailable = new JLabel("\u65e5\u5747\u53ef\u7528");
+    JLabel lMonthLeftDay = new JLabel("\u8ddd\u79bb\u6708\u672b");
+    JLabel lMonthIncome = new JLabel("\u672c\u6708\u6536\u5165");
  
-    JLabel vMonthSpend = new JLabel("￥2300");
-    JLabel vTodaySpend = new JLabel("￥25");
-    JLabel vAvgSpendPerDay = new JLabel("￥120");
-    JLabel vMonthAvailable = new JLabel("￥2084");
-    JLabel vDayAvgAvailable = new JLabel("￥389");
-    JLabel vMonthLeftDay = new JLabel("15天");
+    JLabel vMonthSpend = new JLabel("\uffe52300");
+    JLabel vTodaySpend = new JLabel("\uffe525");
+    JLabel vAvgSpendPerDay = new JLabel("\uffe5120");
+    JLabel vMonthAvailable = new JLabel("\uffe52084");
+    JLabel vDayAvgAvailable = new JLabel("\uffe5389");
+    JLabel vMonthLeftDay = new JLabel("15\u5929");
+    JLabel vMonthIncome = new JLabel("\uffe50");
  
     CircleProgressBar bar;
  
@@ -42,11 +44,12 @@ public class SpendPanel extends WorkingPanel {
         bar.setBackgroundColor(ColorUtil.blueColor);
  
         setColor(ColorUtil.grayColor, lMonthSpend, lTodaySpend, lAvgSpendPerDay, lMonthLeft, lDayAvgAvailable,
-                lMonthLeftDay, vAvgSpendPerDay, vMonthAvailable, vDayAvgAvailable, vMonthLeftDay);
-        setColor(ColorUtil.blueColor, vMonthSpend, vTodaySpend);
+                lMonthLeftDay, vAvgSpendPerDay, vMonthAvailable, vDayAvgAvailable, vMonthLeftDay, lMonthIncome);
+        setColor(ColorUtil.blueColor, vMonthSpend, vTodaySpend, vMonthIncome);
  
-        vMonthSpend.setFont(new Font("微软雅黑", Font.BOLD, 23));
-        vTodaySpend.setFont(new Font("微软雅黑", Font.BOLD, 23));
+        vMonthSpend.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.BOLD, 20));
+        vTodaySpend.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.BOLD, 20));
+        vMonthIncome.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.BOLD, 20));
  
         this.add(center(), BorderLayout.CENTER);
         this.add(south(), BorderLayout.SOUTH);
@@ -58,20 +61,20 @@ public class SpendPanel extends WorkingPanel {
         p.setLayout(new BorderLayout());
         p.add(west(), BorderLayout.WEST);
         p.add(east());
- 
         return p;
     }
  
     private Component east() {
- 
         return bar;
     }
  
     private Component west() {
         JPanel p = new JPanel();
-        p.setLayout(new GridLayout(4, 1));
+        p.setLayout(new GridLayout(6, 1));
         p.add(lMonthSpend);
         p.add(vMonthSpend);
+        p.add(lMonthIncome);
+        p.add(vMonthIncome);
         p.add(lTodaySpend);
         p.add(vTodaySpend);
         return p;
@@ -100,6 +103,8 @@ public class SpendPanel extends WorkingPanel {
     @Override
     public void updateData() {
         SpendPage spend = new SpendService().getSpendPage();
+        vMonthIncome.setText(spend.monthIncome);
+        vMonthIncome.setForeground(ColorUtil.blueColor);
         vMonthSpend.setText(spend.monthSpend);
         vTodaySpend.setText(spend.todaySpend);
         vAvgSpendPerDay.setText(spend.avgSpendPerDay);

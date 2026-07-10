@@ -3,6 +3,7 @@ package gui.panel;
 import static util.GUIUtil.showPanel;
  
 import java.awt.BorderLayout;
+import java.awt.Font;
 import java.awt.Image;
 import java.util.List;
  
@@ -23,19 +24,31 @@ public class ReportPanel extends WorkingPanel {
     JLabel lPie = new JLabel();
  
     public ReportPanel() {
+        // 顶部标题
+        JLabel lMainTitle = new JLabel("\u6708\u5ea6\u6536\u652f\u62a5\u8868", JLabel.CENTER);
+        lMainTitle.setForeground(ColorUtil.blueColor);
+        lMainTitle.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.BOLD, 16));
+ 
+        // 饼图面板（分类消费占比）
         JPanel pPie = new JPanel(new BorderLayout());
-        JLabel lTitle = new JLabel("\u672c\u6708\u5404\u5206\u7c7b\u6d88\u8d39\u5360\u6bd4", JLabel.CENTER);
-        lTitle.setForeground(ColorUtil.blueColor);
-        lTitle.setFont(new java.awt.Font("\u5fae\u8f6f\u96c5\u9ed1", java.awt.Font.BOLD, 14));
-        pPie.add(lTitle, BorderLayout.NORTH);
+        JLabel lPieTitle = new JLabel("\u672c\u6708\u5404\u5206\u7c7b\u6d88\u8d39\u5360\u6bd4", JLabel.CENTER);
+        lPieTitle.setForeground(ColorUtil.blueColor);
+        lPieTitle.setFont(new Font("\u5fae\u8f6f\u96c5\u9ed1", Font.BOLD, 14));
+        pPie.add(lPieTitle, BorderLayout.NORTH);
         pPie.add(lPie, BorderLayout.CENTER);
  
-        this.setLayout(new BorderLayout(8, 8));
-        List<Record> rs = new ReportService().listThisMonthRecords();
+        // 柱状图面板（标题 + 收支双柱图）
+        JPanel pBar = new JPanel(new BorderLayout());
+        pBar.add(lMainTitle, BorderLayout.NORTH);
+        pBar.add(lBar, BorderLayout.CENTER);
+ 
+        this.setLayout(new BorderLayout(8, 4));
+        List<Record> spendRecords = new ReportService().listThisMonthRecords();
+        List<Record> incomeRecords = new ReportService().listThisMonthIncomeRecords();
         List<CategorySpend> cs = new ReportService().listCategorySpend();
-        lBar.setIcon(new ImageIcon(ChartUtil.getImage(rs, 400, 120)));
-        lPie.setIcon(new ImageIcon(ChartUtil.getPieImage(cs, 400, 130)));
-        this.add(lBar, BorderLayout.NORTH);
+        lBar.setIcon(new ImageIcon(ChartUtil.getIncomeExpenseImage(spendRecords, incomeRecords, 400, 100)));
+        lPie.setIcon(new ImageIcon(ChartUtil.getPieImage(cs, 400, 120)));
+        this.add(pBar, BorderLayout.NORTH);
         this.add(pPie, BorderLayout.SOUTH);
         addListener();
     }
@@ -46,10 +59,11 @@ public class ReportPanel extends WorkingPanel {
  
     @Override
     public void updateData() {
-        List<Record> rs = new ReportService().listThisMonthRecords();
+        List<Record> spendRecords = new ReportService().listThisMonthRecords();
+        List<Record> incomeRecords = new ReportService().listThisMonthIncomeRecords();
         List<CategorySpend> cs = new ReportService().listCategorySpend();
-        lBar.setIcon(new ImageIcon(ChartUtil.getImage(rs, 400, 120)));
-        lPie.setIcon(new ImageIcon(ChartUtil.getPieImage(cs, 400, 130)));
+        lBar.setIcon(new ImageIcon(ChartUtil.getIncomeExpenseImage(spendRecords, incomeRecords, 400, 100)));
+        lPie.setIcon(new ImageIcon(ChartUtil.getPieImage(cs, 400, 120)));
     }
  
     @Override

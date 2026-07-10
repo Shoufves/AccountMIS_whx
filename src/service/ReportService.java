@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.Map;
  
 import dao.CategoryDAO;
+import dao.IncomeDAO;
 import dao.RecordDAO;
 import entity.Category;
 import entity.CategorySpend;
+import entity.Income;
 import entity.Record;
 import util.DateUtil;
  
@@ -89,6 +91,33 @@ public class ReportService {
             result.add(new CategorySpend(name, e.getValue(),
                     e.getValue() * 100.0 / total, colors[ci % colors.length]));
             ci++;
+        }
+        return result;
+    }
+
+    /**
+     * 获取本月每日收入数据（用于月度收支报表）
+     * @return 每日收入对应的Record列表（复用spend字段存储收入金额）
+     */
+    public List<Record> listThisMonthIncomeRecords() {
+        IncomeDAO dao = new IncomeDAO();
+        List<Income> monthRawData = dao.listThisMonth();
+        List<Record> result = new ArrayList<>();
+        Date monthBegin = DateUtil.monthBegin();
+        int monthTotalDay = DateUtil.thisMonthTotalDay();
+        Calendar c = Calendar.getInstance();
+        for (int i = 0; i < monthTotalDay; i++) {
+            Record r = new Record();
+            c.setTime(monthBegin);
+            c.add(Calendar.DATE, i);
+            Date eachDay = c.getTime();
+            int dayIncome = 0;
+            for (Income inc : monthRawData) {
+                if (inc.date != null && inc.date.equals(eachDay))
+                    dayIncome += inc.amount;
+            }
+            r.spend = dayIncome;
+            result.add(r);
         }
         return result;
     }

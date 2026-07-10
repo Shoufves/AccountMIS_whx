@@ -30,14 +30,14 @@ public class MainPanel extends JPanel {
  
     private MainPanel() {
  
-        GUIUtil.setImageIcon(bSpend, "home.png", "消费一览");
-        GUIUtil.setImageIcon(bRecord, "record.png", "记一笔");
-        GUIUtil.setImageIcon(bCategory, "category2.png", "消费分类");
-        GUIUtil.setImageIcon(bReport, "report.png", "月消费报表");
-        GUIUtil.setImageIcon(bConfig, "config.png", "设置");
-        GUIUtil.setImageIcon(bBackup, "backup.png", "备份");
-        GUIUtil.setImageIcon(bRecover, "restore.png", "恢复");
-        GUIUtil.setImageIcon(bHistory, "history.png", "历史记录");
+        GUIUtil.setImageIcon(bSpend, "home.png", "\u6d88\u8d39\u4e00\u89c8");
+        GUIUtil.setImageIcon(bRecord, "record.png", "\u8bb0\u4e00\u7b14");
+        GUIUtil.setImageIcon(bCategory, "category2.png", "\u6d88\u8d39\u5206\u7c7b");
+        GUIUtil.setImageIcon(bReport, "report.png", "\u6708\u6d88\u8d39\u62a5\u8868");
+        GUIUtil.setImageIcon(bConfig, "config.png", "\u8bbe\u7f6e");
+        GUIUtil.setImageIcon(bBackup, "backup.png", "\u5907\u4efd");
+        GUIUtil.setImageIcon(bRecover, "restore.png", "\u6062\u590d");
+        GUIUtil.setImageIcon(bHistory, "history.png", "\u5386\u53f2\u8bb0\u5f55");
  
         tb.add(bSpend);
         tb.add(bRecord);
